@@ -1,15 +1,19 @@
 # /// script
 # dependencies = [
 #   "crawl4ai",
+#   "pandas",
+#   "tabulate",
 # ]
 # ///
 
 import asyncio
 import sys
 import re
+import argparse
 from pathlib import Path
 from datetime import datetime
-from crawl4ai import AsyncWebCrawler
+from crawl4ai import AsyncWebCrawler, CrawlerRunConfig
+from templates import CRAWL_TEMPLATES
 
 def slugify(text: str) -> str:
     """
@@ -23,18 +27,23 @@ def slugify(text: str) -> str:
     text = re.sub(r'[\s-]+', '-', text)
     return text
 
-async def crawl_and_save(urls: list[str], output_dir: Path):
+async def crawl_and_save(urls: list[str], output_dir: Path, template_name: str = "technical-docs"):
     """
     Crawl a list of URLs and save them as Markdown files in the output directory.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     index_entries = []
 
+    # Get configuration from template
+    config = CRAWL_TEMPLATES.get(template_name, CRAWL_TEMPLATES["technical-docs"])
+    print(f"Crawling using template '{template_name}'...")
+
     async with AsyncWebCrawler() as crawler:
         for url in urls:
             print(f"Crawling: {url}...")
             try:
-                result = await crawler.arun(url=url)
+                # Use config in arun
+                result = await crawler.arun(url=url, config=config)
                 
                 if not result.success:
                     print(f"Error crawling {url}: {result.error_message}")
@@ -64,6 +73,7 @@ async def crawl_and_save(urls: list[str], output_dir: Path):
                     "---\n"
                     f"url: {url}\n"
                     f"date: {now}\n"
+                    f"template: {template_name}\n"
                     "---\n\n"
                 )
                 
@@ -85,14 +95,17 @@ async def crawl_and_save(urls: list[str], output_dir: Path):
     print(f"Created index: {index_path}")
 
 async def main():
-    if len(sys.argv) < 3:
-        print("Usage: uv run scripts/crawl.py <output_dir> <url1> [url2 ...]")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Crawl URLs and save as Markdown.")
+    parser.add_argument("output_dir", type=str, help="Directory to save the results.")
+    parser.add_argument("urls", nargs="+", help="One or more URLs to crawl.")
+    parser.add_argument("--template", type=str, default="technical-docs", 
+                        choices=list(CRAWL_TEMPLATES.keys()),
+                        help="Extraction template to use.")
 
-    output_dir = Path(sys.argv[1])
-    urls = sys.argv[2:]
+    args = parser.parse_args()
 
-    await crawl_and_save(urls, output_dir)
+    output_dir = Path(args.output_dir)
+    await crawl_and_save(args.urls, output_dir, args.template)
 
 if __name__ == "__main__":
     asyncio.run(main())

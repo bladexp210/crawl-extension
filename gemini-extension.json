@@ -1,11 +1,12 @@
 {
   "name": "crawl-extension",
-  "version": "0.1.0",
-  "description": "A Gemini CLI extension for crawling URLs and saving content.",
+  "version": "1.0.0",
+  "description": "A tool for crawling websites and generating local documentation.",
+  "main": "tools/crawl_urls.js",
   "tools": [
     {
       "name": "crawl_urls",
-      "description": "Crawl a list of URLs and save the content to a directory.",
+      "description": "Crawls a list of URLs and saves them as Markdown files in an output directory.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -14,24 +15,21 @@
             "items": {
               "type": "string"
             },
-            "description": "List of URLs to crawl."
+            "description": "A list of URLs to crawl."
           },
           "output_dir": {
             "type": "string",
-            "description": "Directory to save the crawled content."
+            "description": "The directory where Markdown files will be saved."
+          },
+          "template": {
+            "type": "string",
+            "description": "The extraction template to use (e.g., 'technical-docs', 'api-reference', 'minimal').",
+            "enum": ["technical-docs", "api-reference", "minimal"],
+            "default": "technical-docs"
           }
         },
-        "required": [
-          "urls",
-          "output_dir"
-        ]
+        "required": ["urls", "output_dir"]
       }
-    }
-  ],
-  "skills": [
-    {
-      "name": "crawler",
-      "description": "A skill for crawling and processing web content."
     }
   ]
 }
