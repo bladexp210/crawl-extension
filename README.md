@@ -21,7 +21,7 @@ This extension requires the following to be installed on your system:
 To install the extension, use the Gemini CLI:
 
 ```bash
-gemini extension add https://github.com/bladexp210/crawl-extension
+gemini extension install https://github.com/bladexp210/crawl-extension
 ```
 
 ## Usage
