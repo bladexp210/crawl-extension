@@ -39,7 +39,7 @@ gemini run "Crawl https://example.com and save to ./research"
 The `crawler` skill provides an interactive research loop. It will search for relevant URLs, let you refine the list, and then crawl them all at once.
 
 ```bash
-gemini run --skill crawler "Research the latest developments in quantum computing"
+gemini run skills crawler "Research the latest developments in quantum computing"
 ```
 
 ## Output Structure
