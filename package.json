@@ -1,0 +1,10 @@
+{
+  "name": "crawl-extension",
+  "version": "0.1.0",
+  "description": "A Gemini CLI extension for crawling URLs and saving content.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
